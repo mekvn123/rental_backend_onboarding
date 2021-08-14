@@ -46,4 +46,31 @@ public class HouseControllerApiTest extends BaseIntegrationTest {
                 .body("totalElements", is(2))
                 .body("content", hasSize(2));
     }
+
+    @Test
+    public void should_find_house_success_if_id_exist() {
+        // given
+        HouseEntity houseEntity = persistence.saveAndFlush(HouseEntity.builder().name("house-1").build());
+
+        // when
+        given()
+                .when()
+                .get("/houses/"+houseEntity.getId())
+                .then()
+                .statusCode(200)
+                .body("id",is(1))
+                .body("name",is("house-1"));
+    }
+
+    @Test
+    public void should_find_house_fail_if_id_not_exist() {
+        // given
+        // when
+        given()
+                .when()
+                .get("/houses/1")
+                .then()
+                .statusCode(404)
+                .body("message",is("无此房源信息"));
+    }
 }

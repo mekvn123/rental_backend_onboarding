@@ -9,6 +9,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import rental.application.HouseApplicationService;
@@ -31,6 +32,12 @@ public class HouseController {
             @SortDefault(sort = "createdTime", direction = Sort.Direction.DESC)
                     Pageable pageable) {
         return promotionProposalApplicationService.queryAllHouses(pageable)
-                                                  .map(ModelToResponseMapper.INSTANCE::mapToPromotionProposalResponse);
+                .map(ModelToResponseMapper.INSTANCE::mapToPromotionProposalResponse);
+    }
+
+    @GetMapping(path = "/{id}")
+    public HouseResponse findHouseById(
+            @PathVariable("id") Long id) {
+        return ModelToResponseMapper.INSTANCE.mapToPromotionProposalResponse(promotionProposalApplicationService.findHouseById(id));
     }
 }

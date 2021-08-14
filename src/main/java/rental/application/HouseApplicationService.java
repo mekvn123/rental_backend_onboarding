@@ -16,4 +16,8 @@ public class HouseApplicationService {
     public Page<House> queryAllHouses(Pageable pageable) {
         return houseRepository.queryAllHouses(pageable);
     }
+
+    public House findHouseById(Long id) {
+        return houseRepository.findHouseById(id);
+    }
 }

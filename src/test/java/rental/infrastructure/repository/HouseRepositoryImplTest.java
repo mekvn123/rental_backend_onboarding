@@ -2,6 +2,7 @@ package rental.infrastructure.repository;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -14,6 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import rental.domain.model.House;
 import rental.infrastructure.dataentity.HouseEntity;
 import rental.infrastructure.persistence.HouseJpaPersistence;
+import rental.presentation.exception.AppException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -77,5 +79,26 @@ public class HouseRepositoryImplTest {
         // then
         assertEquals(0, result.getTotalElements());
         assertEquals(0, result.getContent().size());
+    }
+
+    @Test
+    public void should_find_house_success_if_id_exist() {
+        // given
+        HouseEntity houseEntity = entityManager.persistAndFlush(HouseEntity.builder().name("house-1").build());
+
+        // when
+        House house = this.repository.findHouseById(houseEntity.getId());
+
+        //then
+        assertEquals("house-1", house.getName());
+    }
+
+    @Test
+    public void should_find_house_fail_if_id_not_exist() {
+        // given
+        entityManager.persistAndFlush(HouseEntity.builder().name("house-1").build());
+
+        // when
+        Assertions.assertThrows(AppException.class, () -> this.repository.findHouseById(Long.MIN_VALUE));
     }
 }

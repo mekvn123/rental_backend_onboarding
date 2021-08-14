@@ -1,7 +1,9 @@
 package rental.presentation.assembler;
 
 import rental.domain.model.House;
+import rental.presentation.dto.response.common.ErrorResponse;
 import rental.presentation.dto.response.house.HouseResponse;
+import rental.presentation.exception.AppException;
 import rental.utils.DateUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -27,4 +29,6 @@ public interface ModelToResponseMapper {
     default long toTimestamp(LocalDateTime localDateTime) {
         return DateUtils.toTimestamp(localDateTime);
     }
+
+    ErrorResponse mapToErrorResponse(AppException appException);
 }

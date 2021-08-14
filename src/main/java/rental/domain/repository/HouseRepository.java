@@ -6,4 +6,6 @@ import rental.domain.model.House;
 
 public interface HouseRepository {
     Page<House> queryAllHouses(Pageable pageable);
+
+    House findHouseById(Long id);
 }

@@ -9,6 +9,7 @@ import rental.domain.model.House;
 import rental.domain.repository.HouseRepository;
 import rental.infrastructure.mapper.EntityToModelMapper;
 import rental.infrastructure.persistence.HouseJpaPersistence;
+import rental.presentation.exception.AppException;
 
 @Component
 @Slf4j
@@ -19,5 +20,10 @@ public class HouseRepositoryImpl implements HouseRepository {
     @Override
     public Page<House> queryAllHouses(Pageable pageable) {
         return this.persistence.findAll(pageable).map(EntityToModelMapper.INSTANCE::mapToModel);
+    }
+
+    @Override
+    public House findHouseById(Long id) {
+        return EntityToModelMapper.INSTANCE.mapToModel(this.persistence.findById(id).orElseThrow(() -> new AppException("404", "无此房源信息")));
     }
 }
