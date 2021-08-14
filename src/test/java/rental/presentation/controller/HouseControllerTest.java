@@ -47,8 +47,8 @@ public class HouseControllerTest {
 
         // when
         mvc.perform(get("/houses").accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk()).andExpect(jsonPath("$.content", hasSize(2)))
-            .andExpect(jsonPath("$.totalElements").value(2));
+                .andExpect(status().isOk()).andExpect(jsonPath("$.content", hasSize(2)))
+                .andExpect(jsonPath("$.totalElements").value(2));
     }
 
     @Test

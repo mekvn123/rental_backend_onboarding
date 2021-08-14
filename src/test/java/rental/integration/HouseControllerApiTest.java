@@ -55,10 +55,10 @@ public class HouseControllerApiTest extends BaseIntegrationTest {
         // when
         given()
                 .when()
-                .get("/houses/"+houseEntity.getId())
+                .get("/houses/" + houseEntity.getId())
                 .then()
                 .statusCode(200)
-                .body("name",is("house-1"));
+                .body("name", is("house-1"));
     }
 
     @Test
@@ -70,6 +70,6 @@ public class HouseControllerApiTest extends BaseIntegrationTest {
                 .get("/houses/1")
                 .then()
                 .statusCode(404)
-                .body("message",is("无此房源信息"));
+                .body("message", is("无此房源信息"));
     }
 }
