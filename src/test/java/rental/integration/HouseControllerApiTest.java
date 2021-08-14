@@ -58,7 +58,6 @@ public class HouseControllerApiTest extends BaseIntegrationTest {
                 .get("/houses/"+houseEntity.getId())
                 .then()
                 .statusCode(200)
-                .body("id",is(1))
                 .body("name",is("house-1"));
     }
 

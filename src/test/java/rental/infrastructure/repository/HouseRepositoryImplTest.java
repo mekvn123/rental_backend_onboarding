@@ -87,7 +87,7 @@ public class HouseRepositoryImplTest {
         HouseEntity houseEntity = entityManager.persistAndFlush(HouseEntity.builder().name("house-1").build());
 
         // when
-        House house = this.repository.findHouseById(houseEntity.getId());
+        House house = this.repository.findHouseById(houseEntity.getId()).get();
 
         //then
         assertEquals("house-1", house.getName());

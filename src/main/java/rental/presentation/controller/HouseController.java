@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import rental.application.HouseApplicationService;
+import rental.domain.model.House;
 import rental.presentation.assembler.ModelToResponseMapper;
 import rental.presentation.dto.response.house.HouseResponse;
 
@@ -38,6 +39,7 @@ public class HouseController {
     @GetMapping(path = "/{id}")
     public HouseResponse findHouseById(
             @PathVariable("id") Long id) {
-        return ModelToResponseMapper.INSTANCE.mapToPromotionProposalResponse(promotionProposalApplicationService.findHouseById(id));
+        House house = promotionProposalApplicationService.findHouseById(id);
+        return ModelToResponseMapper.INSTANCE.mapToPromotionProposalResponse(house);
     }
 }

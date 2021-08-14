@@ -14,6 +14,7 @@ import rental.presentation.exception.AppException;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
@@ -50,7 +51,7 @@ public class HouseApplicationServiceTest {
     public void should_find_house_success_if_id_exist() {
         // given
         House house = House.builder().id(1L).name("name-1").build();
-        when(repository.findHouseById(any())).thenReturn(house);
+        when(repository.findHouseById(any())).thenReturn(Optional.of(house));
 
         // when
         House findHouse = applicationService.findHouseById(1L);

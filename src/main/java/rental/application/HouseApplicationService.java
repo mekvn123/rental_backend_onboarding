@@ -6,6 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import rental.domain.model.House;
 import rental.domain.repository.HouseRepository;
+import rental.presentation.exception.AppException;
+
+import java.util.Optional;
 
 
 @Service
@@ -18,6 +21,7 @@ public class HouseApplicationService {
     }
 
     public House findHouseById(Long id) {
-        return houseRepository.findHouseById(id);
+        return houseRepository.findHouseById(id).get();
     }
 }
+
