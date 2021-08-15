@@ -1,6 +1,10 @@
 package rental.presentation.assembler;
 
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 import rental.domain.model.House;
 import rental.presentation.dto.response.common.ErrorResponse;
