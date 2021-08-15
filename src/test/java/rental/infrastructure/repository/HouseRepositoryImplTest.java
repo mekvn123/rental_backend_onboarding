@@ -101,4 +101,16 @@ public class HouseRepositoryImplTest {
         // when
         Assertions.assertThrows(AppException.class, () -> this.repository.findHouseById(Long.MIN_VALUE));
     }
+
+    @Test
+    public void should_save_house_success_with_entity_house() {
+        // given
+        House house = House.builder().name("house-1").build();
+
+        // when
+        House saveHouse = this.repository.addHouse(house);
+
+        // then
+        Assertions.assertEquals("house-1", saveHouse.getName());
+    }
 }

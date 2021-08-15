@@ -7,15 +7,23 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
+
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RequestBody;
 import rental.application.HouseApplicationService;
-import rental.domain.model.House;
 import rental.presentation.assembler.ModelToResponseMapper;
+import rental.presentation.assembler.RequestToModelMapper;
+import rental.presentation.dto.response.house.HouseRequest;
 import rental.presentation.dto.response.house.HouseResponse;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/houses")
@@ -39,7 +47,15 @@ public class HouseController {
     @GetMapping(path = "/{id}")
     public HouseResponse findHouseById(
             @PathVariable("id") Long id) {
-        House house = promotionProposalApplicationService.findHouseById(id);
-        return ModelToResponseMapper.INSTANCE.mapToPromotionProposalResponse(house);
+        return ModelToResponseMapper.INSTANCE.mapToPromotionProposalResponse(
+                promotionProposalApplicationService.findHouseById(id));
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public HouseResponse addHouse(@RequestBody @Valid HouseRequest houseRequest) {
+        return ModelToResponseMapper.INSTANCE.mapToPromotionProposalResponse(
+                promotionProposalApplicationService.addHouse(
+                        RequestToModelMapper.INSTANCE.mapToModel(houseRequest)));
     }
 }

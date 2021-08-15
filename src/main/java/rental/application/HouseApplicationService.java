@@ -20,5 +20,9 @@ public class HouseApplicationService {
     public House findHouseById(Long id) {
         return houseRepository.findHouseById(id).get();
     }
+
+    public House addHouse(House house) {
+        return houseRepository.addHouse(house);
+    }
 }
 

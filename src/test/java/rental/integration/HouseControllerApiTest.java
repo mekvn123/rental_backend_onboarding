@@ -1,16 +1,23 @@
 package rental.integration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.restassured.http.ContentType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import rental.RentalServiceApplication;
 import rental.config.BaseIntegrationTest;
 import rental.infrastructure.dataentity.HouseEntity;
 import rental.infrastructure.persistence.HouseJpaPersistence;
+import rental.presentation.dto.response.house.HouseRequest;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -32,7 +39,7 @@ public class HouseControllerApiTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void should_get_all_houses() throws Exception {
+    public void should_get_all_houses() {
         // given
         persistence.saveAndFlush(HouseEntity.builder().name("house-1").build());
         persistence.saveAndFlush(HouseEntity.builder().name("house-2").build());
@@ -71,5 +78,93 @@ public class HouseControllerApiTest extends BaseIntegrationTest {
                 .then()
                 .statusCode(404)
                 .body("message", is("无此房源信息"));
+    }
+
+    @Test
+    public void should_add_house_success_if_house_info_is_complete() throws Exception {
+        // given
+        HouseRequest houseRequest = HouseRequest.builder()
+                .name("Home Sweet Home")
+                .location("Beijing West 2nd Ring Road")
+                .price(new BigDecimal("3000.0"))
+                .establishedTime(LocalDateTime.now())
+                .build();
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(houseRequest);
+
+        // when
+        given()
+                .body(json)
+                .contentType(ContentType.JSON)
+                .when()
+                .post("/houses")
+                .then()
+                .status(HttpStatus.CREATED);
+    }
+
+    @Test
+    public void should_add_house_fail_if_house_info_lack_location() throws Exception {
+        // given
+        HouseRequest houseRequest = HouseRequest.builder()
+                .name("Home Sweet Home")
+                .price(new BigDecimal("3000.0"))
+                .establishedTime(LocalDateTime.now())
+                .build();
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(houseRequest);
+
+        // when
+        given()
+                .body(json)
+                .contentType(ContentType.JSON)
+                .when()
+                .post("/houses")
+                .then()
+                .status(HttpStatus.BAD_REQUEST)
+                .body("message", is("房屋地址不能为空"));
+    }
+
+    @Test
+    public void should_add_house_fail_if_house_info_lack_price() throws Exception {
+        // given
+        HouseRequest houseRequest = HouseRequest.builder()
+                .name("Home Sweet Home")
+                .location("Beijing West 2nd Ring Road")
+                .establishedTime(LocalDateTime.now())
+                .build();
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(houseRequest);
+
+        // when
+        given()
+                .body(json)
+                .contentType(ContentType.JSON)
+                .when()
+                .post("/houses")
+                .then()
+                .status(HttpStatus.BAD_REQUEST)
+                .body("message", is("租金不能为空"));
+    }
+
+    @Test
+    public void should_add_house_fail_if_house_info_lack_establishedTime() throws Exception {
+        // given
+        HouseRequest houseRequest = HouseRequest.builder()
+                .name("Home Sweet Home")
+                .location("Beijing West 2nd Ring Road")
+                .price(new BigDecimal("3000.0"))
+                .build();
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(houseRequest);
+
+        // when
+        given()
+                .body(json)
+                .contentType(ContentType.JSON)
+                .when()
+                .post("/houses")
+                .then()
+                .status(HttpStatus.BAD_REQUEST)
+                .body("message", is("建成时间不能为空"));
     }
 }

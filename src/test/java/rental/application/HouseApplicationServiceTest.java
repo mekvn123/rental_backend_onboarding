@@ -1,6 +1,7 @@
 package rental.application;
 
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -12,6 +13,8 @@ import rental.domain.model.House;
 import rental.domain.repository.HouseRepository;
 import rental.presentation.exception.AppException;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -69,5 +72,25 @@ public class HouseApplicationServiceTest {
         assertThatThrownBy(() ->
                 repository.findHouseById(Long.MIN_VALUE)).isInstanceOf(AppException.class)
                 .hasMessageContaining("无此房源信息");
+    }
+
+    @Test
+    public void should_add_house_success_if_house_info_is_complete() {
+        // given
+        House house = House.builder()
+                .name("Home Sweet Home")
+                .location("Beijing West 2nd Ring Road")
+                .price(new BigDecimal("3000.0"))
+                .establishedTime(LocalDateTime.of(2008, 5, 20, 0, 0))
+                .build();
+        when(repository.addHouse(any())).thenReturn(house);
+
+        // when
+        House addHouse = applicationService.addHouse(house);
+
+        // then
+        Assertions.assertEquals("Beijing West 2nd Ring Road", addHouse.getLocation());
+        Assertions.assertEquals(new BigDecimal("3000.0"), addHouse.getPrice());
+        Assertions.assertEquals(LocalDateTime.of(2008, 5, 20, 0, 0), addHouse.getEstablishedTime());
     }
 }

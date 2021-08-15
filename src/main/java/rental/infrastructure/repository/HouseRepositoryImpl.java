@@ -9,6 +9,7 @@ import rental.domain.model.House;
 import rental.domain.repository.HouseRepository;
 import rental.infrastructure.dataentity.HouseEntity;
 import rental.infrastructure.mapper.EntityToModelMapper;
+import rental.infrastructure.mapper.ModelToEntityMapper;
 import rental.infrastructure.persistence.HouseJpaPersistence;
 import rental.presentation.exception.AppException;
 
@@ -29,5 +30,11 @@ public class HouseRepositoryImpl implements HouseRepository {
     public Optional<House> findHouseById(Long id) {
         HouseEntity houseEntity = persistence.findById(id).orElseThrow(() -> new AppException("404", "无此房源信息"));
         return Optional.of(EntityToModelMapper.INSTANCE.mapToModel(houseEntity));
+    }
+
+    @Override
+    public House addHouse(House house) {
+        return EntityToModelMapper.INSTANCE.mapToModel(
+                persistence.save(ModelToEntityMapper.INSTANCE.mapToEntity(house)));
     }
 }
