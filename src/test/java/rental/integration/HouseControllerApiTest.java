@@ -7,10 +7,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import rental.RentalServiceApplication;
+import rental.client.FakeClient;
 import rental.config.BaseIntegrationTest;
 import rental.infrastructure.dataentity.HouseEntity;
 import rental.infrastructure.persistence.HouseJpaPersistence;
@@ -21,6 +23,8 @@ import java.time.LocalDateTime;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(
@@ -32,6 +36,9 @@ public class HouseControllerApiTest extends BaseIntegrationTest {
     private ApplicationContext applicationContext;
 
     private HouseJpaPersistence persistence;
+
+    @MockBean
+    private FakeClient fakeClient;
 
     @Before
     public void setUp() {
@@ -93,6 +100,9 @@ public class HouseControllerApiTest extends BaseIntegrationTest {
         String json = objectMapper.writeValueAsString(houseRequest);
 
         // when
+        when(fakeClient.addHouse(any())).thenReturn(Boolean.TRUE);
+
+        // then
         given()
                 .body(json)
                 .contentType(ContentType.JSON)
@@ -166,5 +176,30 @@ public class HouseControllerApiTest extends BaseIntegrationTest {
                 .then()
                 .status(HttpStatus.BAD_REQUEST)
                 .body("message", is("建成时间不能为空"));
+    }
+
+    @Test
+    public void should_add_house_fail_if_send_to_3rd_Client_fail() throws Exception {
+        // given
+        HouseRequest houseRequest = HouseRequest.builder()
+                .name("Home Sweet Home")
+                .location("Beijing West 2nd Ring Road")
+                .price(new BigDecimal("3000.0"))
+                .establishedTime(LocalDateTime.now())
+                .build();
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(houseRequest);
+        // when
+        when(fakeClient.addHouse(any())).thenReturn(Boolean.FALSE);
+
+        // then
+        given()
+                .body(json)
+                .contentType(ContentType.JSON)
+                .when()
+                .post("/houses")
+                .then()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("message", is("fail: send houseInfo to 3rd Client"));
     }
 }

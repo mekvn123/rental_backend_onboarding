@@ -12,4 +12,6 @@ public interface HouseRepository {
     Optional<House> findHouseById(Long id);
 
     House addHouse(House house);
+
+    void deleteHouse(House house);
 }

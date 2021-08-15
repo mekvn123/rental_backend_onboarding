@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
-    @ExceptionHandler(AppException.class)
-    public ResponseEntity<ErrorResponse> handle(AppException ex) {
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ErrorResponse> handle(NotFoundException ex) {
         ErrorResponse errorResponse = ModelToResponseMapper.INSTANCE.mapToErrorResponse(ex);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
@@ -33,5 +33,11 @@ public class GlobalExceptionHandler {
                 .message(message)
                 .build();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(Add3rdClientException.class)
+    public ResponseEntity<ErrorResponse> handle(Add3rdClientException ex) {
+        ErrorResponse errorResponse = ModelToResponseMapper.INSTANCE.mapToErrorResponse(ex);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 }

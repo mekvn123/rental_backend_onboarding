@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import rental.domain.model.House;
 import rental.infrastructure.dataentity.HouseEntity;
 import rental.infrastructure.persistence.HouseJpaPersistence;
-import rental.presentation.exception.AppException;
+import rental.presentation.exception.NotFoundException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -99,7 +99,7 @@ public class HouseRepositoryImplTest {
         entityManager.persistAndFlush(HouseEntity.builder().name("house-1").build());
 
         // when
-        Assertions.assertThrows(AppException.class, () -> this.repository.findHouseById(Long.MIN_VALUE));
+        Assertions.assertThrows(NotFoundException.class, () -> this.repository.findHouseById(Long.MIN_VALUE));
     }
 
     @Test

@@ -15,7 +15,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import rental.application.HouseApplicationService;
 import rental.domain.model.House;
 import rental.presentation.dto.response.house.HouseRequest;
+import rental.presentation.exception.Add3rdClientException;
 import rental.presentation.exception.AppException;
+import rental.presentation.exception.NotFoundException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -71,7 +73,7 @@ public class HouseControllerTest {
     @Test
     public void should_find_house_fail_if_id_not_exist() throws Exception {
         // given
-        when(applicationService.findHouseById(1L)).thenThrow(new AppException("404", "无此房源信息"));
+        when(applicationService.findHouseById(1L)).thenThrow(new NotFoundException("404", "无此房源信息"));
 
         // when
         mvc.perform(get("/houses/1").accept(MediaType.APPLICATION_JSON))
@@ -160,5 +162,27 @@ public class HouseControllerTest {
                         .content(json).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message", is("建成时间不能为空")));
+    }
+
+    @Test
+    public void should_add_house_fail_if_send_to_3rd_Client_fail() throws Exception {
+        // given
+        HouseRequest houseRequest = HouseRequest.builder()
+                .name("Home Sweet Home")
+                .location("Beijing West 2nd Ring Road")
+                .price(new BigDecimal("3000.0"))
+                .establishedTime(LocalDateTime.now())
+                .build();
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(houseRequest);
+        when(applicationService.addHouse(any()))
+                .thenThrow(new Add3rdClientException("500", "fail: send houseInfo to 3rd Client"));
+
+        // then
+        mvc.perform(post("/houses").accept(MediaType.APPLICATION_JSON)
+                        .content(json).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.message", is("fail: send houseInfo to 3rd Client")));
+
     }
 }
