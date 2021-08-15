@@ -6,9 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import rental.domain.model.House;
 import rental.domain.repository.HouseRepository;
-import rental.presentation.exception.AppException;
-
-import java.util.Optional;
 
 
 @Service
